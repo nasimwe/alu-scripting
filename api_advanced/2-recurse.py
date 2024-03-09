@@ -1,38 +1,28 @@
 #!/usr/bin/python3
-"""
-Append all the hot post's titles from a particular
-subreddit on a list calleg hot_list.
-"""
-
-import json
+""" This module uses recursion to get hot articles"""
 import requests
 
 
 def recurse(subreddit, hot_list=[], after=None):
-    url = 'https://www.reddit.com/r/{}/hot.json'.format(subreddit)
-    headers = {'User-Agent': 'Mozilla/5.0'}
-
-    # After is set to none at first.
-    params = {'after': after} if after else {}
-
-    response = requests.get(url, headers=headers, params=params)
-
+    BASE_URL = 'https://www.reddit.com/r/{}/hot.json'.format(subreddit)
+    headers = {'User-Agent': 'Didas Junior'}
+    params = {'after': after}
+    response = requests.get(BASE_URL, headers=headers,
+                            params=params,
+                            allow_redirects=False)
     if response.status_code == 200:
-        data = response.json()
-
-        for post in data['data']['children']:
-            title = post['data']['title']
-            hot_list.append(title)
-
-        # set after to the last post of the previous result.
-        after = data['data']['after']
-
-        # call the function with the updated after i.e recursion
-        # to retrieve addition pages.
-        if after:
-            recurse(subreddit, hot_list, after)
-
+        data = response.json().get('data')
+        if data is not None:
+            children = data.get('children')
+            if children is not None:
+                for child in children:
+                    hot_list.append(child.get('data').get('title'))
+                after = data.get('after')
+                if after is not None:
+                    return recurse(subreddit, hot_list, after)
+                else:
+                    return hot_list
+        else:
+            return hot_list
     else:
         return None
-
-    return hot_list

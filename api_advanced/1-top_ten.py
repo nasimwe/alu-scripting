@@ -1,21 +1,20 @@
 #!/usr/bin/python3
-"""
-Return top 10 posts of a subreddit.
-"""
-
-import json
+""" This module returns the top ten hot posts for a subreddit"""
 import requests
 
 
 def top_ten(subreddit):
-    url = 'https://www.reddit.com/r/{}/hot.json?limit=10'.format(subreddit)
-    headers = {'User-Agent': 'Mozilla/5.0'}
-    response = requests.get(url, headers=headers)
-
+    BASE_URL = 'https://www.reddit.com/r/{}.json'.format(subreddit)
+    headers = {'User-Agent': 'Didas Junior'}
+    response = requests.get(BASE_URL, headers=headers)
     if response.status_code == 200:
-        data = json.loads(response.text)
-        for post in data['data']['children']:
-            title = post['data']['title']
-            print(title)
+        result = response.json()
+        data = result.get('data').get('children')
+        titleArray = []
+        for item in data:
+            title = item.get('data').get('title')
+            titleArray.append(title)
+        for i in range(10):
+            print(titleArray[i])
     else:
         print(None)
