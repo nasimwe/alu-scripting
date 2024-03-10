@@ -1,23 +1,16 @@
 #!/usr/bin/python3
-"""
-A script that use reddit api to outputs the
-number of subscribers of a certain subreddit.
-"""
+"""0-subs.py"""
 
-
-import json
 import requests
 
 
 def number_of_subscribers(subreddit):
+    """Reddit subscribers"""
+    url = "https://www.reddit.com/r/{}/about.json".format(subreddit)
+    headers = {"User-Agent": "My-User-Agent"}
 
-    url = 'https://www.reddit.com/r/{}/about.json'.format(subreddit)
-    headers = {'User-Agent': 'Mozilla/5.0'}
-    response = requests.get(url, headers=headers)
-
-    if response.status_code == 200:
-        data = json.loads(response.text)
-        return data['data']['subscribers']
-
-    else:
+    response = requests.get(url, headers=headers, allow_redirects=False)
+    if response.status_code != 200:
         return 0
+    else:
+        return response.json().get("data").get("subscribers")
