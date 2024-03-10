@@ -5,7 +5,7 @@ import requests
 
 def top_ten(subreddit):
     BASE_URL = 'https://www.reddit.com/r/{}.json'.format(subreddit)
-    headers = {'User-Agent': 'Didas Junior'}
+    headers = {'User-Agent': 'My-User-Agent'}
     response = requests.get(BASE_URL, headers=headers)
     if response.status_code == 200:
         result = response.json()
